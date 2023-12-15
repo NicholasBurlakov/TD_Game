@@ -1,6 +1,7 @@
 --! file: main.lua
 local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
-local tileSize = 64  -- Original tile size
+local baseTileSize = 64  -- Original tile size
+local tilemap  -- Define tilemap before using it
 
 function love.load()
     Object = require "classic"
@@ -8,11 +9,6 @@ function love.load()
     lightGrass = love.graphics.newImage("/sprites/Environment/Grass1.png")
     darkGrass = love.graphics.newImage("/sprites/Environment/Grass2.png")
     dirt = love.graphics.newImage("/sprites/Environment/Dirt.png")
-
-    -- Print dimensions to the console for debugging
-    print("Light Grass dimensions:", lightGrass:getWidth(), lightGrass:getHeight())
-    print("Dark Grass dimensions:", darkGrass:getWidth(), darkGrass:getHeight())
-    print("Dirt dimensions:", dirt:getWidth(), dirt:getHeight())
 
     -- Build tiles
     tilemap = {
@@ -25,6 +21,9 @@ function love.load()
         {1, 1, 1, 1, 0, 0, 0, 0},
         {1, 1, 1, 1, 1, 1, 1, 1}
     }
+
+    -- Calculate tileSize based on screen width
+    tileSize = math.floor(screenWidth / (#tilemap[1]))  -- Adjust as needed
 end
 
 function love.update(dt)
@@ -36,7 +35,7 @@ function love.draw()
         for j, tile in ipairs(row) do
             local x = (j - 1) * tileSize
             local y = (i - 1) * tileSize
-            local scale = tileSize / lightGrass:getWidth()
+            local scale = tileSize / baseTileSize * 4  -- Adjust the scaling factor as needed
 
             if tile == 0 then
                 love.graphics.draw(lightGrass, x, y, 0, scale, scale)
